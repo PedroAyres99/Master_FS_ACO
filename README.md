@@ -10,9 +10,11 @@ Algoritmo "tsp_aco.py". implementaado em Python, funciona nas versões do Python
 # Ant_Colony_Optimization_Feature_Selection.py
 
 # UFSACO: Unsupervised Feature Selection using Ant Colony Optimization
-Simulation of an Unsupervised Feature Selection using Ant Colony Optimization (UFSACO) algorithm. System is implemented in Python 2.7.11.
+ - Simulation of an Unsupervised Feature Selection using Ant Colony Optimization (UFSACO) algorithm. System is implemented in Python 2.7.11.
 Link for algorithm details: [Paper](https://https://www.researchgate.net/publication/261371258_An_unsupervised_feature_selection_algorithm_based_on_ant_colony_optimization) 
 (Segue pasta artigos)
+
+- UFSACO C++
 
 # WFACOFS: Wrapper Filter based Ant Colony Optmization for Feature Selection
 A wrapper-filter feature selection technique based on ant colony optimization
