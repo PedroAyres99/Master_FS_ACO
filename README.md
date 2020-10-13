@@ -18,7 +18,8 @@ Link for algorithm details: [Paper](https://https://www.researchgate.net/publica
 
 # WFACOFS: Wrapper Filter based Ant Colony Optmization for Feature Selection
 A wrapper-filter feature selection technique based on ant colony optimization
-Link for algorithm details: [Paper](https://link.springer.com/article/10.1007/s00521-019-04171-3) 
-(Segue pasta artigos)
+Link for algorithm details: [Paper](https://link.springer.com/article/10.1007/s00521-019-04171-3)(Segue pasta artigos)
+Link de código em .m [link](https://github.com/ManosijGhosh/Feature-Selection-Algorithm/tree/master/WFACOFS)
+
 
 # Nova_proposta.py
