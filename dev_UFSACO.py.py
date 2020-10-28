@@ -22,6 +22,7 @@ warnings.filterwarnings("ignore")
 #data.columns = da.feature_names # Carrega os nomes ddos atributos para colunas
 #label = da.target # Carrega o target, valor preditivo
 
+#Etapas a serem implementadas:
 
 path = 'D:\Python\Classifier_CHAID/'
 input_file = 'TML_test.csv'  #Verifique se a planilha está nos moldes corretos. 
