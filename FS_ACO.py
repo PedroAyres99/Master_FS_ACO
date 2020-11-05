@@ -16,7 +16,6 @@ da = load_iris()
 #data.columns = da.feature_names # Carrega os nomes ddos atributos para colunas
 #label = da.target # Carrega o target, valor preditivo
 
-
 path = 'D:\Python\Classifier_CHAID/'
 input_file = 'TML_test.csv'  #Verifique se a planilha está nos moldes corretos. 
 dados = pd.read_csv(path+input_file)
@@ -24,8 +23,12 @@ dados = pd.read_csv(path+input_file)
 data = dados
 label = dados.f100 *10 # *TML: Artificio utilizado para sanar o problema do classificador SVM do qual os valores da predição DEVEM ser números inteiros
 
+# PARÂMETROS DE CONFIGURAÇÃO DO ACO:
+
 X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.20, random_state=42)
-#verificar a % destinada para TESTES e TREINO.
+#verificar a % destinada para TESTES e TREINO. 20% para teste
+
+# PARÂMETROS DE CONFIGURAÇÃO DO ACO:
 
 q0 = 0.7 # :coefiente [Exploration-Exploitation], um numero real no intervalo de [0, 1]. Par^ametro que de
 #ne a regra de transic~ao de estado, entre uma busca gulosa ou probabilstica.
@@ -34,22 +37,25 @@ ants = 81 #quantidade de formigas, de acordo com a qtde de atributos
 max_iter = 50 #parâmetro padrão para ACO
 phe = np.random.uniform(0.1,1,81) #4 valores aleatorios entre 0,1 e 1. É um ARRAY (Lista)
 
-      # :param ant_count:
-      # :param generations:
-      # :param alpha: relative importance of pheromone
-      # :param beta: relative importance of heuristic information
-      # :param rho: pheromone residual coefficient
-     # :param q: pheromone intensity
-     #  :param strategy: pheromone update strategy. 0 - ant-cycle, 1 - ant-quality, 2 - ant-density
-        
+"""
+param ant_count:
+param generations:
+param alpha: relative importance of pheromone
+param beta: relative importance of heuristic information
+param rho: pheromone residual coefficient
+param q: pheromone intensity
+param strategy: pheromone update strategy. 0 - ant-cycle, 1 - ant-quality, 2 - ant-density
+"""        
 
 for m in range(max_iter): #vai fazer 50 vezes 
-    #### Calculando o caminho para cada formiga
-    path =[] #Cira uma lista vazia, caminho 
+# Calculando o caminho para cada formiga
+    
+    path =[] #Cria uma lista vazia, caminho 
+    
     for j in np.arange(ants): #  Valores são gerados dentro de um intervalo, retorna um array 
                                    #ex: np.arange(4) array([0, 1, 2, 3])
         new_ph =np.copy(phe) # Pega uma cópia do array phe
-        cityA=[] #d eclara uma lista vazia
+        cityA=[] #declara uma lista vazia
         A = np.random.randint(0,81) # Pega um numero apenas inteiro entre 0 e 3
         cityA.append(A) # Adicionar o A na lista cityA, primeira posição
         for i in np.arange(subset-1): # Vai fazer uma lista arrange(2), = lista[0,1]
@@ -70,7 +76,7 @@ for m in range(max_iter): #vai fazer 50 vezes
                             #Passos que a formiga deu ex: [[0,1,3],[1,3,2],[.,.,.],[.,.,.]] retorna 4 caminhos 
          
     #Saiu do for j np.arrange
-    #### Calcula a função objetivo, Fitness, para cada caminho atravez do SVM
+    #### Calcula a função objetivo, Fitness, para cada caminho atraves do SVM
     accuracy=[] # Cria uma lista vazia
     for k in np.arange(len(path)): #Vai pegar o tamanho do path, que tem 4 listas, logo = 4
         model = SVC(random_state=42) #setando o 42 randon state

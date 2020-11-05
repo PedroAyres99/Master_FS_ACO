@@ -22,8 +22,20 @@ warnings.filterwarnings("ignore")
 #data.columns = da.feature_names # Carrega os nomes ddos atributos para colunas
 #label = da.target # Carrega o target, valor preditivo
 
-#Etapas a serem implementadas:
-
+"""Etapas a serem implementadas:
+  loads the dataset
+  finds index in new Data Structure(Symmetric Matrix) 
+      places the ants randomly on the graph nodes as their starting nodes
+          greedy state transition rule
+          probability state transition rule
+          chooses the next feature among unvisited features according to the state transition rules
+     updates intensity of pheromone values
+     starts the feature selection process by (UFSACO) method
+     
+      This method return the subset of selected features by (UFSACO) method.
+      @return an array of subset of selected features
+    """
+    
 path = 'D:\Python\Classifier_CHAID/'
 input_file = 'TML_test.csv'  #Verifique se a planilha está nos moldes corretos. 
 dados = pd.read_csv(path+input_file)
