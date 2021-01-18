@@ -1,6 +1,6 @@
 # SELECÃO DE ATRIBUTOS BASEADO NO ALGORITMO DE OTIMIZACÃO COLÔNIA DE FORMIGAS PARA PROCESSOS MINERADORES
 
-Repositório referente à pesquisa entitulada acima. Programa: Mestrado Profissional em Instrumentação, Controle e Automação de Processos de Mineração - PROFICAM. UFOP - Instituto Tecnológico VALE.
+Repositório referente à pesquisa entitulada acima. Programa: Mestrado Profissional em Instrumentação, Controle e Automação de Processos de Mineração - PROFICAM. Instituições: UFOP / Instituto Tecnológico VALE - ITV.
 
 Feature Selection (Seleção de Atributos): consiste em algoritmos com propósitos de reduzir a dimensionalidade de banco de dados, 
 selecionando sub-conjuntos relevantes para a construção de modelos preditivos. Atributos redundantes prejudicam a performance do algoritmo 
