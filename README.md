@@ -9,7 +9,7 @@ de aprendizagem de máquina, logo selecionar de maneira apropriada os atributos 
 O código abaixo consiste na Seleção de Atributos de determinado Banco de Dados baseado na similaridade de cossenos 
 entre 2 atributos. É utilizado a otimização por colônia de formiga para avalizar subsets através de uma modelagem 
 
-■ Keywords: Feature Selection; Ant Colony Optimization; Dimensionality Reduction; Data Classification; Wrapper Methods; Python.
+■ Keywords: Feature Selection; Ant Colony Optimization; Dimensionality Reduction; IBM SPSS Modeler; Data Classification; Wrapper Methods; Python.
   
 # Algoritmos de referência (indicados na pasta)
 
