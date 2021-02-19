@@ -7,15 +7,18 @@ selecionando sub-conjuntos relevantes para a construção de modelos preditivos.
 de aprendizagem de máquina, logo selecionar de maneira apropriada os atributos de entrada auxilia no desempenho da classificação.
 
 O código abaixo consiste na Seleção de Atributos de determinado Banco de Dados baseado na similaridade de cossenos 
-entre 2 atributos. É utilizado a otimização por colônia de formiga para avalizar subsets através de uma modelagem 
+entre 2 atributos. É utilizado a Otimização por Colônia de Formigas para avaliar subsets através de uma modelagem 
 
 ■ Keywords: Feature Selection; Ant Colony Optimization; Dimensionality Reduction; IBM SPSS Modeler; Data Classification; Wrapper Methods; Python.
   
 # Algoritmos de referência (indicados na pasta)
 
 * Ant Colony Optimization aplicado ao problema do caixeiro viajante (Traveling Salesman Problem - TSP).
+  Link de código [link](https://github.com/marcoscastro/tsp_aco)
+  
 * Ant_Colony_Optimization_Feature_Selection.py
-
+  Link de código [link](https://github.com/sssalam1/Optimization-Codes/blob/master/Ant_Colony_Optimization_Feature_Selection.py)
+  
 * UFSACO: Unsupervised Feature Selection using Ant Colony Optimization
  - Simulation of an Unsupervised Feature Selection using Ant Colony Optimization (UFSACO) algorithm. System is implemented in Python 2.7.11.
 Link for algorithm details: [Paper](https://https://www.researchgate.net/publication/261371258_An_unsupervised_feature_selection_algorithm_based_on_ant_colony_optimization) 
