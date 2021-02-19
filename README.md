@@ -28,3 +28,4 @@ Link de código em .m [link](https://github.com/ManosijGhosh/Feature-Selection-A
 
 # Proposta(em desenvolvimento):
 FS_ACO
+Projetado para selecionar atributos de determinado BD através da ACO adotando a similaridade de cosseno entre pares de atributos como peso. A performance dos subsets(acuracia) através de uma modelagem será avaliada e ao final apresentado o conjunto de maior valor. A atualização do feromônio e regra de probabilidade foram desenvolvidas conforme algoritmo Ant-System
