@@ -20,7 +20,7 @@ entre 2 atributos. É utilizado a Otimização por Colônia de Formigas para ava
   Link de código [link](https://github.com/sssalam1/Optimization-Codes/blob/master/Ant_Colony_Optimization_Feature_Selection.py)
   
 * UFSACO: Unsupervised Feature Selection using Ant Colony Optimization
- - Simulation of an Unsupervised Feature Selection using Ant Colony Optimization (UFSACO) algorithm. System is implemented in Python 2.7.11.
+Simulation of an Unsupervised Feature Selection using Ant Colony Optimization (UFSACO) algorithm. System is implemented in Python 2.7.11.
 Link for algorithm details: [Paper](https://https://www.researchgate.net/publication/261371258_An_unsupervised_feature_selection_algorithm_based_on_ant_colony_optimization) 
 (Segue pasta artigos)
 
