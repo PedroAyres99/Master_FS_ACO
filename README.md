@@ -29,6 +29,10 @@ A wrapper-filter feature selection technique based on ant colony optimization
 Link for algorithm details: [Paper](https://link.springer.com/article/10.1007/s00521-019-04171-3)(Segue pasta artigos)
 Link de código em .m [link](https://github.com/ManosijGhosh/Feature-Selection-Algorithm/tree/master/WFACOFS)
 
-# Proposta(em desenvolvimento):
-FS_ACO
-Projetado para selecionar atributos de determinado BD através da ACO adotando a similaridade de cosseno entre pares de atributos como peso. A performance dos subsets(acuracia) através de uma modelagem será avaliada e ao final apresentado o conjunto de maior valor. A atualização do feromônio e regra de probabilidade foram desenvolvidas conforme algoritmo Ant-System
+# Proposta:
+
+  O método proposto neste projeto baseia-se no desenvolvimento de um algoritmo de seleção de atributos do tipo \textit{Filter-Wrapper} baseado na ACO, observando-se a tendência de recentes literaturas propostas na área. Foi adotado como estrutura de código para a otimização por colônia de formigas o proposto no algoritmo \textit{Ant Systems} e a partir dele realizado as alterações de forma que o método apresente características do tipo \textit{Filter} e \textit{Wrapper}. O algoritmo foi desenvolvido adotando-se a linguagem Python 3.8 com o auxílio de ferramentas disponibilizadas pelas bibliotecas relacionadas à Preparação de Dados, Estatísticas e Machine Learning. É adotado como função de avaliação a métrica Acurácia.
+ 
+O fluxograma do algoritmo é descrito através da figura abaixo:
+
+![Fluxo_FS_ACO_3](https://user-images.githubusercontent.com/53266990/138096556-7b2b161b-5729-46dd-9a38-c351f5981e85.png)
