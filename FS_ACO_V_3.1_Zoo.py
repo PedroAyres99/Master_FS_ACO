@@ -4,6 +4,7 @@
 
 O código abaixo consiste na Seleção de Atributos de determinado Banco de Dados baseado na similaridade de cossenos 
 entre 2 atributos. É utilizado a otimização por colônia de formiga para avalizar subsets através de uma modelagem 
+utilizando o classificador MLP
 
 Feature Selection (Seleção de Atributos): consiste em algoritmos com propósitos de reduzir a dimensionalidade 
 de banco de dados, selecionando sub-conjuntos relevantes para a construção de modelos preditivos. 
@@ -20,11 +21,11 @@ import math
 import time
 from datetime import timedelta
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_wine
 from sklearn.metrics import accuracy_score
 from scipy import spatial
-from scipy.spatial.distance import cosine
-from sklearn import svm #Classificador categorico, nao continuo.
+#from scipy.spatial.distance import cosine
+from sklearn.neural_network import MLPClassifier 
+from sklearn.neighbors import KNeighborsClassifier 
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -72,7 +73,6 @@ class Aresta:
     def setFeromonio(self, feromonio):
         self.feromonio = feromonio
 
-
 # CLASSE QUE REPRESENTA UM GRAFO COMPLETO
 
 class Grafo:
@@ -109,8 +109,7 @@ class Grafo:
 
         custo += self.obterCustoAresta(caminho[-1], caminho[0])
         return custo
-
-
+    
 class GrafoCompleto(Grafo):
 
 # FUNÇÃO GERAR GRAFO COMPLETO
@@ -165,7 +164,7 @@ class Formiga:
 
 class ACO:
 
-    def __init__(self, grafo, num_formigas, alfa=1.0, beta=5.0, iteracoes=10, evaporacao=0.2, num_FS=8):
+    def __init__(self, grafo, num_formigas, alfa=1.0, beta=5.0, iteracoes=15, evaporacao=0.3, num_FS=8):
         self.grafo = grafo
         self.num_formigas = num_formigas
         self.alfa = alfa  # importância do feromônio
@@ -187,7 +186,7 @@ class ACO:
 
         # calcula o custo guloso pra usar na inicialização de TODOS VALORES DE FEROMONIO
         custo_guloso = 0.0  # custo guloso
-        vertice_inicial = random.randint(1, grafo.num_vertices)  # seleciona um vértice aleatório
+        vertice_inicial = random.randint(0, grafo.num_vertices - 1)  # seleciona um vértice aleatório
         vertice_corrente = vertice_inicial
         visitados = [vertice_corrente]  # lista de visitados
         while True:
@@ -201,8 +200,6 @@ class ACO:
             if len(visitados) == self.grafo.num_vertices:
                 break
             min_custo = min(custos)  # pega o menor custo da lista
-
-
             custo_guloso += min_custo  # adiciona o custo ao total
             vertice_corrente = escolhidos[min_custo]  # atualiza o vértice corrente
             visitados.append(vertice_corrente)  # marca o vértice corrente como visitado
@@ -210,17 +207,18 @@ class ACO:
         custo_guloso += self.grafo.obterCustoAresta(visitados[-1], vertice_inicial)
 
 # Dorigo propõe inicializar o feromônio de todas as arestas por 1 / (n.Ln),
-# onde Lnn é o custo de uma construção puramente gulosa. CALCULADO ACIMA
+# onde Lnn é o custo de uma construção puramente gulosa, CALCULADO ACIMA
 
         # INICIALIZAÇÃO DO FEROMONIO EM TODAS AS ARESTAS
         for chave_aresta in self.grafo.arestas:
             feromonio = 1.0 / (self.grafo.num_vertices * custo_guloso)
-            #feromonio = 0.2
+            #feromonio = 0.2 **Tabakhi2014
             self.grafo.setFeromonioAresta(chave_aresta[0], chave_aresta[1], feromonio)
             
-        # Sugestão de adotar o valor inicial de feromonio = 0,2 para todas arestas, seguindo o proposto em UFSACO
-        # P/ ex: BD_Wine, Feromonio inicializado com 0.0055 a partir da construção gulosa.
-    
+        # Sugestão de adotar o valor inicial de feromonio = 0.2 para todas arestas, seguindo o proposto em UFSACO
+        # P/ ex: BD_Wine, Feromonio inicializado em 0.0055 a partir da construção gulosa.
+            
+    # IMPRIMIR INFORMAÕES E PARÂMETROS UTILIZADOS NA ACO
     def imprimir(self):
         
         string = "\nSeleção de Atributos baseado na Otimização por Colônia de Formigas:"
@@ -234,17 +232,21 @@ class ACO:
         string += "\nNº de Iterações:\t\t\t\t\t{}".format(self.iteracoes)
         string += "\nNº de Atributos a serem selecionados:\t\t\t{}".format(self.num_FS)
         string += "\n--------------------"
-        #string += "\nObservações:"
-        #string += "\nO número de formigas influencia em quantos caminhos serão explorados a cada iteração."
-        #string += "\nHeurísticas Alpha e Beta afetam a influência dos feromônios ou da distância heurística nas decisões das formigas."
-        #string += "\nBeta reduz a influência da heurística ao longo do tempo. "
-        #string += "\n--------------------"
         
         print(string)
+    
+    # GERAR EXCEL DE ARESTAS e FEROMONIOS FINAL
+    def imprimir_feromonios(self,execucao):
+        feromonios_df = pd.DataFrame()
+        for chave_aresta in self.grafo.arestas:
+            feromonios_df = feromonios_df.append({'Aresta': chave_aresta,
+                            'Feromonio' : self.grafo.obterFeromonioAresta(chave_aresta[0], chave_aresta[1])}, ignore_index=True)
+        feromonios_df.to_excel(r'C:\Users\Pedro Ayres\Desktop\Resultados_FS_ACO\Feromonio_Arestas'+str(execucao)+'.xlsx', index = False, sheet_name="Feromonios")
+        #Alterar o destino aonde está sendo salvo o .xls
         
 # NÚCLEO DO ACO:
 
-    def rodar(self, banco_dados, target):
+    def rodar(self, banco_dados, target, execucao):
 
        #INICIO DAS ITERACOES (NÚCLEO ACO):
         
@@ -299,31 +301,30 @@ class ACO:
                     
             # Fim de UMA ITERAÇÃO entre TODAS FORMIGAS, obtendo-se uma lista de caminhos percorridos por cada formiga        
             
-            cidades_visitadas_PD = pd.DataFrame(cidades_visitadas)
+            cidades_visitadas_df = pd.DataFrame(cidades_visitadas)
             
             #CRIA-SE LISTAGEM DE CAMINHOS A PARTIR DA QTDE DE ATRIBUTOS QUE DESEJA-SE SELECIONAR: NUM_FS
-            Lista_FS = cidades_visitadas_PD.iloc[:, 0:self.num_FS].values
+            Lista_FS = cidades_visitadas_df.iloc[:, 0:self.num_FS].values
             
             #Introduzir modelador para avaliar cada SUBSET de soluções geradas a partir de cada formiga
             # A função objetivo(Custo, no caso métrica ACURACIA) para cada caminho(SUBSETS) atraves de classificadores
             
             # SEPARANDO PARA TREINAMENTO / TESTE
-            X_train, X_test, y_train, y_test = train_test_split(banco_dados, target, test_size=0.20, random_state=42)
+            X_train, X_test, y_train, y_test = train_test_split(banco_dados, target, test_size=0.30, random_state=42)
                         
-            #CLASSIFICAÇÃO REALIZADA ATRAVES DO SVM, ADOTANDO-SE AS COLUNAS SELECIONADAS NO SUBSET(NUM_FS)
+            #CLASSIFICAÇÃO REALIZADA ATRAVES DO CLASSIFICADOR MLP, ADOTANDO-SE AS COLUNAS SELECIONADAS NO SUBSET(NUM_FS)
             #accuracy=[] # Cria uma lista vazia
             for x in range(self.num_formigas): # Quantidade de formigas
-                #Create a svm Classifier
-                clf = svm.SVC(kernel='linear') # Linear Kernel
-                clf.fit(X_train.iloc[:,Lista_FS[x]],y_train) # Aprender a base de treino, usar variaveis TREINOS
+                #Create a MPL Classifier
+                model = MLPClassifier(hidden_layer_sizes=(30,30), max_iter=30)
+                #model = KNeighborsClassifier(n_neighbors=5) #Utilizado N = 5, padrão adotado
+                model.fit(X_train.iloc[:,Lista_FS[x]],y_train) # Aprender a base de treino, usar variaveis TREINOS
                 #Predict the response for test dataset
-                y_pred = clf.predict(X_test.iloc[:,Lista_FS[x]]) # Prevê a base de teste
+                y_pred = model.predict(X_test.iloc[:,Lista_FS[x]]) # Prevê a base de teste
                 # Model Accuracy: how often is the classifier correct?
-                #accuracy.append(accuracy_score(y_test, y_pred)) // Descomente para caso queira ver a listagem de acc
                 # atualiza a SOLUÇÃO E ACURÁCIA encontrada pela formiga
-                self.formigas[x].setSolucao(Lista_FS[x], accuracy_score(y_test, y_pred))
-
-
+                self.formigas[x].setSolucao(Lista_FS[x], accuracy_score(y_test, y_pred)) #Acuracia entre 2 variaveis
+                
             # VERIFICANDO DENTRE TODAS AS FORMIGAS QUAL OBTEVE A MELHOR ACURACIA NA ITERACAO
             top_solucao = []
             top_acc = None
@@ -365,18 +366,27 @@ class ACO:
                 #ATUALIZAÇÃO DO FEROMONIO NA ARESTA, LEVA EM CONSIDERAÇÃO A EQUAÇÃO PROPOSTA NO ANT SYSTEM PAG:28
                 # calcula o novo feromônio, PARA A ARESTA APOS ANALISE DE PERCURSO DE FORMIGAS
                 novo_feromonio = (1.0 - self.evaporacao) * self.grafo.obterFeromonioAresta(aresta[0], aresta[1]) + somatorio_feromonio
-				# O Algoritmo está atualizando toda a lista de cidades visitadas, e não apenas as selecionadas 
+				# O Algoritmo está atualizando toda a lista de ATRIBUTOS visitados, e não apenas os selecionadas 
                 # para a etapa de classificação, visando completar todo o depósito/evaporação no restante dos atributos 
                 # seta o novo feromônio da aresta
                 self.grafo.setFeromonioAresta(aresta[0], aresta[1], novo_feromonio)
             # FIM DA ROTINA DE ATUALIZAÇÃO DO FEROMÔNIO
                 
         # FIM DO CICLO DAS ITERAÇÕES
-
+                
+        # GERAR EXCEL DE TOP_ACURACIAS/SUB-SETs x ITERAÇÃO
+        acc_df = pd.DataFrame()
+        for k in range(self.iteracoes):
+            acc_solucao = self.acuracias[k].obterSolucao_final()[:]
+            acc_df = acc_df.append({'Iteração: ':k,
+                        'Sub_Set:': ','.join(str(i) for i in acc_solucao),
+                        'Acuracia' : self.acuracias[k].obterAcuracia_final()}, ignore_index=True)
+        acc_df.to_excel(r'C:\Users\Pedro Ayres\Desktop\Resultados_FS_ACO\Listagem_acc'+str(execucao)+'.xlsx', index = False, sheet_name="Top_Acc")
+        #Alterar o destino aonde está sendo salvo o .xls
+        
         # PERCORRE LISTAGEM DE ACURACIAS QUAL DENTRE OBTEVE MAIOR VALOR, APRESENTANDO O SEU SUBSET 
         solucao_final = []
         acc_final = None
-        #(solucao, custo) = (None, None)
         for k in range(self.iteracoes):
             if not acc_final:
                 solucao_final = self.acuracias[k].obterSolucao_final()[:]
@@ -389,12 +399,12 @@ class ACO:
             
         
         print('Solução(sub-set) de atributos que apresentaram maior acurácia ao longo de', self.iteracoes, 'iterações:')
-        print('%s | Acuracia: %d\n' % (' -> '.join(str(i) for i in solucao_final), acc_final))
+        print('%s | Acuracia: %f\n' % (' -> '.join(str(i) for i in solucao_final), acc_final))
         
         print("\n--------------------")        
         end_time = time.monotonic()
         print('Tempo de execução do código: ', timedelta(seconds=end_time - start_time))
-
+        
 #------------------------------------------------------------------------------------------------------#
 #############################
 ##### INÍCIO DO CÓDIGO ######
@@ -402,11 +412,16 @@ class ACO:
         
 # IMPORTANDO O BANCO DE DADOS
 
-da = load_wine()
+path = 'C:\Bancos_dados\Zoo/'
+input_file = 'Zoo_2.csv'  #Verifique se a planilha está nos moldes corretos. 
+dados = pd.read_csv(path+input_file)
 
-data = pd.DataFrame(da.data)
-data.columns = da.feature_names
-label = da.target
+data_all = pd.DataFrame(dados)
+
+data = data_all.iloc[:,0:-1]
+label = dados.iloc[:,-1]
+
+
 
 print('Informações do Bando de Dados(Amostras, Atributos):', data.shape)
 #print (data.head())
@@ -425,50 +440,61 @@ def cosine_distance(v1, v2):
         v1_abs.append(v1[i] * 100.0 / (v1[i] + v2[i] or 1))
         v2_abs.append(v2[i] * 100.0 / (v1[i] + v2[i] or 1))
 
-    return 1 / (1 - spatial.distance.cosine(v1_abs, v2_abs))  # Inserido o artificio: (1 / (-1...)), cosine_similarity = 1 - cosine_distance.
+    #return 1 / (1 - spatial.distance.cosine(v1_abs, v2_abs))  # Inserido o artificio: (1 / (-1...)), cosine_similarity = 1 - cosine_distance.
+    return (1 - spatial.distance.cosine(v1_abs, v2_abs))  # Inserido o artificio: (1 / (-1...)), cosine_similarity = 1 - cosine_distance.)
 
-# Criando uma matriz vazia
-matrix = np.zeros((data.shape[1], data.shape[1]))
 
-# Interagindo ao longo da matriz para calcular a similaridade de cossenos entre atributos (Vértices)
-for k in range(len(data.columns)):
-    data_1 = data.iloc[:, [k]].values
-    for j in range(len(data.columns)):
-        data_2 = data.iloc[:, [j]].values
-        matrix[k, j] = cosine_distance(data_1, data_2)
-        j += 1
-    k += 1
 
-df_matrix_similaridade = pd.DataFrame(matrix, columns=data.columns, index=data.columns)
-# Salvando a matriz:
-# df_matrix_similaridade.to_csv('Matriz_Similaridade.csv')
+# NÚMERO DE EXECUÇÕES DO ALGORITMO. IRÁ GERAR NUM_EXEC PLANILHAS .CSV COMO SAÍDA
+for execucao in range (5):
+    
+    # Criando uma matriz vazia
+    matrix = np.zeros((data.shape[1], data.shape[1]))
 
-# ---------------------------------------------------------------------------------------#
-# GERAÇÃO DO GRAFO COMPLETO
-num_vertices = 13
-# O código foi desenvolvido para assumir o NUM_FORMIGAS = NUM_VERTICES, em futura revisão, desassociar estas variáveis.
+    # Interagindo ao longo da matriz para calcular a similaridade de cossenos entre atributos (Vértices)
+    for k in range(len(data.columns)):
+        data_1 = data.iloc[:, [k]].values
+        for j in range(len(data.columns)):
+            data_2 = data.iloc[:, [j]].values
+            matrix[k, j] = cosine_distance(data_1, data_2)
+            j += 1
+        k += 1
 
-# ex: P/ BD Wine, GRAFO COMPLETO (13 x 13): 169 - 13(idênticas) = 156 Arestas
-grafo_completo = GrafoCompleto(num_vertices=num_vertices)
-grafo_completo.gerar(matrix)
+        df_matrix_similaridade = pd.DataFrame(matrix, columns=data.columns, index=data.columns)
+    # Salvando a matriz:
+    # df_matrix_similaridade.to_csv('Matriz_Similaridade.csv')
 
-# ---------------------------------------------------------------------------------------#
-# CLASSE ACO A PARTIR DO GRAFO E PARÂMETROS
+    # ---------------------------------------------------------------------------------------#
+    # GERAÇÃO DO GRAFO COMPLETO
+    num_vertices = 16 # Podemos usar data.shape[1]
+    # O código foi desenvolvido para assumir o NUM_FORMIGAS = NUM_VERTICES, em futura revisão, desassociar estas variáveis.
 
-"""
-OBSERVAÇÕES RELACIONADAS AOS PARÂMETROS DO ACO: 
-- Dorigo propoe que alpha deve ficar em torno de 1. Um valor muito baixo de provocaria estagnação precoce 
-do algoritmo e um valor alto demais o aproxima de uma construção gulosa. 
-O ajuste deste parâmetro é importante para se obter uma boa diversificação, propõe que fique em torno de 5.
- - UFSACO: (NCmax=50), theinitialamountofpheromoneforeachfeatureis 0.2(τi=0.2), 
-#pheromoneevaporationcoefficient issetto 0.2, parameter β is setto1(β=1)
- - WFACOFS: n Number of ants 10 / a Exploitation balance factor 1 / b Exploration balance factor 1
-Iteration Number of iterations 20 / d Pheromone evaporation factor 0.15
+    # ex: P/ BD Wine, GRAFO COMPLETO (13 x 13): 169 - 13(idênticas) = 156 Arestas
+    grafo_completo = GrafoCompleto(num_vertices=num_vertices)
+    grafo_completo.gerar(matrix)
 
-"""
-aco2 = ACO(grafo=grafo_completo, num_formigas=grafo_completo.num_vertices, alfa=1, beta=5, iteracoes=10,
-    evaporacao=0.2, num_FS=8)
+    # ---------------------------------------------------------------------------------------#
+    # CLASSE ACO A PARTIR DO GRAFO E PARÂMETROS
 
-aco2.imprimir()
+    """
+    OBSERVAÇÕES RELACIONADAS AOS PARÂMETROS DO ACO: 
+    - Dorigo propoe que alpha deve ficar em torno de 1. Um valor muito baixo de provocaria estagnação precoce 
+    do algoritmo e um valor alto demais o aproxima de uma construção gulosa. 
+    O ajuste deste parâmetro é importante para se obter uma boa diversificação, propõe que fique em torno de 5.
+    - UFSACO: (NCmax=50), theinitialamountofpheromoneforeachfeatureis 0.2(τi=0.2), 
+    #pheromoneevaporationcoefficient issetto 0.2, parameter β is setto1(β=1)
+    - WFACOFS: n Number of ants 10 / a Exploitation balance factor 1 / b Exploration balance factor 1
+    Iteration Number of iterations 20 / d Pheromone evaporation factor 0.15
 
-aco2.rodar(banco_dados = data, target = label)
+    """
+    # CRIA-SE UMA CLASSE ACO2, PASSANDO OS PARÃMETROS
+    aco2 = ACO(grafo=grafo_completo, num_formigas=16, alfa=1, beta=5, iteracoes=15, evaporacao=0.5, num_FS=11)
+
+    # IMPRIMIR INFORMAÕES E PARÂMETROS UTILIZADOS NA ACO
+    aco2.imprimir()
+
+    # EXECUTA O NÚCLEO ACO 
+    aco2.rodar(banco_dados = data, target = label, execucao = execucao)
+
+    # GERAR EXCEL DE ARESTASxFEROMONIOS FINAL
+    aco2.imprimir_feromonios(execucao)
