@@ -28,7 +28,7 @@ Link de código em .m [link](https://github.com/ManosijGhosh/Feature-Selection-A
 
 # Proposta:
 
-  O método proposto neste projeto baseia-se no desenvolvimento de um algoritmo de seleção de atributos do tipo Filter-Wrapper baseado na ACO, observando-se a tendência de recentes literaturas propostas na área. Foi adotado como estrutura de código para a otimização por colônia de formigas o proposto no algoritmo Ant Systems e a partir dele realizado as alterações de forma que o método apresente características do tipo \textit{Filter} e \textit{Wrapper}. O algoritmo foi desenvolvido adotando-se a linguagem Python 3.8 com o auxílio de ferramentas disponibilizadas pelas bibliotecas relacionadas à Preparação de Dados, Estatísticas e Machine Learning. É adotado como função de avaliação a métrica Acurácia.
+  O método proposto neste projeto baseia-se no desenvolvimento de um algoritmo de seleção de atributos do tipo Filter-Wrapper baseado na ACO, observando-se a tendência de recentes literaturas propostas na área. Foi adotado como estrutura de código para a otimização por colônia de formigas o proposto no algoritmo Ant Systems e a partir dele realizado as alterações de forma que o método apresente características do tipo Filter e Wrapper. O algoritmo foi desenvolvido adotando-se a linguagem Python 3.8 com o auxílio de ferramentas disponibilizadas pelas bibliotecas relacionadas à Preparação de Dados, Estatísticas e Machine Learning. É adotado como função de avaliação a métrica Acurácia.
  
 O fluxograma do algoritmo é descrito através da figura abaixo:
 
